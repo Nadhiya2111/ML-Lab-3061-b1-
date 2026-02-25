@@ -1,0 +1,54 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+from sklearn.mixture import GaussianMixture
+from sklearn.datasets import make_blobs
+
+# 1. Generate Synthetic Data (Replacing the CSV)
+# Creating 3 clusters to represent different driving behaviors
+X, y_true = make_blobs(n_samples=300, centers=3, cluster_std=0.60, random_state=42)
+
+# Optional: Convert to DataFrame to match your original structure
+X_df = pd.DataFrame(X, columns=['Distance_Feature', 'Speeding_Feature'])
+X = X_df.values
+
+# 2. Run EM (Gaussian Mixture Model)
+gmm = GaussianMixture(n_components=3, random_state=42)
+gmm.fit(X)
+em_predictions = gmm.predict(X)
+
+print("\n--- EM (GMM) Results ---")
+print("Means:\n", gmm.means_)
+print("Covariances:\n", gmm.covariances_)
+
+# 3. Run K-Means
+kmeans = KMeans(n_clusters=3, n_init=10, random_state=42)
+kmeans.fit(X)
+km_predictions = kmeans.labels_
+
+print("\n--- K-Means Results ---")
+print("Centers:\n", kmeans.cluster_centers_)
+
+# 4. Visualization
+plt.figure(figsize=(12, 5))
+
+# Plot EM Results
+plt.subplot(1, 2, 1)
+plt.scatter(X[:, 0], X[:, 1], c=em_predictions, s=40, cmap='viridis', alpha=0.7)
+plt.title('EM (Gaussian Mixture)')
+plt.xlabel('Distance')
+plt.ylabel('Speeding')
+
+# Plot K-Means Results
+plt.subplot(1, 2, 2)
+plt.scatter(X[:, 0], X[:, 1], c=km_predictions, s=40, cmap='rainbow', alpha=0.7)
+plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], 
+            color='black', marker='X', s=150, label='Centers')
+plt.title('K-Means')
+plt.xlabel('Distance')
+plt.ylabel('Speeding')
+plt.legend()
+
+plt.tight_layout()
+plt.show()
