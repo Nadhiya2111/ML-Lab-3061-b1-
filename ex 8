@@ -1,0 +1,38 @@
+import numpy as np
+import pandas as pd
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split
+from sklearn import metrics
+from sklearn.datasets import load_iris
+
+iris = load_iris()
+df = pd.DataFrame(iris['data'], columns=iris['feature_names'])
+
+X = df
+y = iris['target']
+
+print("Dataset Head:")
+print(X.head())
+
+Xtrain, Xtest, ytrain, ytest = train_test_split(X, y, test_size=0.10, random_state=42)
+
+classifier = KNeighborsClassifier(n_neighbors=3)
+classifier.fit(Xtrain, ytrain)
+
+ypred = classifier.predict(Xtest)
+
+print("\n" + "-"*60)
+print('%-20s%-20s%-20s' % ('Original Label', 'Predicted Label', 'Status'))
+print("-" * 60)
+
+for i in range(len(ytest)):
+    status = 'Correct' if ytest[i] == ypred[i] else 'Wrong'
+    print('%-20s%-20s%-20s' % (ytest[i], ypred[i], status))
+
+print("\nConfusion Matrix:")
+print(metrics.confusion_matrix(ytest, ypred))
+
+print("\nClassification Report:")
+print(metrics.classification_report(ytest, ypred))
+
+print("\nAccuracy Score: %0.2f" % metrics.accuracy_score(ytest, ypred))
