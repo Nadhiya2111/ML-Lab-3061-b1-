@@ -1,0 +1,27 @@
+import numpy as np
+import pandas as pd
+from sklearn.neighbors import KNeighborsClassifier
+
+data = {
+    'Study Hours': [2, 3, 5, 6, 8, 1],
+    'Attendance': [30, 35, 60, 65, 80, 25],
+    'Result': ['Fail', 'Fail', 'Pass', 'Pass', 'Pass', 'Fail']
+}
+
+df = pd.DataFrame(data)
+
+X = df[['Study Hours', 'Attendance']]
+y = df['Result']
+
+knn = KNeighborsClassifier(n_neighbors=3)
+knn.fit(X, y)
+
+new_student = np.array([[4, 50]])
+prediction = knn.predict(new_student)
+
+print("-" * 30)
+print("Student Result Prediction")
+print("-" * 30)
+print(f"Input: Study Hours = {new_student[0][0]}, Attendance = {new_student[0][1]}%")
+print(f"Predicted Result: {prediction[0]}")
+print("-" * 30)
